@@ -49,7 +49,7 @@ const NewItem = (props) => {
 
   const onSubmitItem = (e) => {
     e.preventDefault()
-    axios.post("http://localhost:3000/menu", item).then((response) => {
+    axios.post("http://localhost:3000/api/menu", item).then((response) => {
       props.submit(item)
     })
   }

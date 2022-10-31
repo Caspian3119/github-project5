@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import ItemContainer from './Container.module.css'
-
+import axios from 'axios'
 const EditItemForm = ({submit, id, cancel, name, price, category, image}) => {
 
   const [item,setItem] = useState({
@@ -58,9 +58,10 @@ const EditItemForm = ({submit, id, cancel, name, price, category, image}) => {
 
   const onEditItem = (e) => {
     e.preventDefault();
+    axios.put(`http://localhost:4000/api/menu/${id}`, item).then((response) => {
     submit(item);
-  };
-
+  });
+}
   const onCancelEdit = (e) => {
     e.preventDefault();
     cancel(false);

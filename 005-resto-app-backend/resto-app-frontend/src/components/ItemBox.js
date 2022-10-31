@@ -1,24 +1,19 @@
-import React, {useState} from "react";
-import ItemContainer from './Container.module.css'
+import axios from "axios";
+import React from "react";
+import ItemContainer from "./Container.module.css";
 
-const ItemBox = ({id, name, price, image, deleteClick, editClick, editButton, dispatch}) => {
-  const [count, setCount] = useState(0);
-
-  const increment = () => {
-    setCount(count + 1); 
-    dispatch({ type: 'ORDERS', payload: {type: 'INCREMENT', id: id, quantity: count}})
-  };
-
-  const decrement = () =>{
-    if(count > 0){
-      setCount(count - 1);
-    }  
-    dispatch({ type: 'ORDERS', payload: {type: 'DECREMENT', id: id}})
-  }
-
+const ItemBox = ({
+  id,
+  name,
+  price,
+  image,
+  deleteClick,
+  editClick,
+  dispatch,
+}) => {
   return (
     <div className={ItemContainer.itemContainer}>
-        <img className={ItemContainer.img} src={image} alt="item" /> 
+      <img className={ItemContainer.img} src={image} alt="item" />
       <div className="Details">
         <strong>{name}</strong>
 
@@ -26,18 +21,35 @@ const ItemBox = ({id, name, price, image, deleteClick, editClick, editButton, di
           <small>Php {price}</small>
         </p>
         <p>
-          <button className={ItemContainer.quantityBtn} onClick={decrement}> - </button>
-          <span className={ItemContainer.quantity}>{count}</span>
-          <button className={ItemContainer.quantityBtn} onClick={increment}> + </button>
+          <button
+            className="itemBtn"
+            onClick={() =>
+              axios
+                .post("http://localhost:4000/api/cart", {
+                  id: id,
+                  name: name,
+                  price: price,
+                  image: image,
+                })
+                .then((response) => {
+                  dispatch({ type: "ADD-TO-CART", payload: { id: id } });
+                })
+            }
+          >
+            Order
+          </button>
         </p>
 
         <p>
-          <button className={ItemContainer.btn} onClick={() => deleteClick(id)}>Delete</button>
+          <button className={ItemContainer.btn} onClick={() => deleteClick(id)}>
+            Delete
+          </button>
           <br />
-          {editButton  ? "" : <button className={ItemContainer.btn} onClick={() => editClick(id)}>Edit</button> }
+          <button className={ItemContainer.btn} onClick={() => editClick(id)}>
+            Edit
+          </button>
           <br />
         </p>
-
       </div>
     </div>
   );

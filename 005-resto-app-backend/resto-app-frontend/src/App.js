@@ -1,168 +1,174 @@
-import React, { useReducer, useEffect} from "react";
+import React, { useReducer, useEffect } from "react";
 import ItemBox from "./components/ItemBox";
 import FilterCartItem from "./components/FilterCartItem";
 import NewItem from "./components/NewItem";
 import EditItem from "./components/EditItemForm";
 import { v4 as uuidv4 } from "uuid";
 import CartItems from "./components/CartItems";
-import Logo from "./components/image/bamboo.png"
-import Styles from './App.module.css'
-import axios from "axios"
+import Logo from "./components/image/bamboo.png";
+import Styles from "./App.module.css";
+import axios from "axios";
 
-const initialState= {
+const initialState = {
   items: [],
   newItems: false,
   editForm: false,
   cartItems: [],
   category: "",
-  editItem: {
-    id: "",
-    name: "",
-    price: 0,
-    category: "",
-    image: "",
-  }
-}
+  editItem: [],
+};
 
 const reducer = (state, action) => {
-  switch(action.type){
-    case 'CATEGORIES':
+  switch (action.type) {
+    case "CATEGORIES":
       return { ...state, category: action.payload.category };
-    case 'TOGGLE-ADD-ITEM-FORM': 
-      return state.newItems ? {...state, newItems: false} : {...state, newItems: true}
+    case "TOGGLE-ADD-ITEM-FORM":
+      return state.newItems
+        ? { ...state, newItems: false }
+        : { ...state, newItems: true };
 
-    case 'TOGGLE-EDIT-ITEM-FORM': 
-      return state.editForm ? {...state, editForm: false} : {...state, editForm: true}
+    case "TOGGLE-EDIT-ITEM-FORM":
+      return state.editForm
+        ? { ...state, editForm: false }
+        : { ...state, editForm: true };
 
-    case 'ADD-ITEM-SUBMIT': 
+    case "ADD-ITEM-SUBMIT":
       const item = {
         id: uuidv4(),
-        ...action.payload.newItem
+        ...action.payload.newItem,
       };
-      return {...state, items:[...state.items, item], newItems: false}
+      return { ...state, items: [...state.items, item], newItems: false };
 
-    case 'DELETE-ITEM': 
-      const deleteItems = state.items.filter((item) => item.id !== action.payload.id) 
-      const deleteCartItems = state.cartItems.filter((item) => item.id !== action.payload.id) 
-      return {...state, items: deleteItems, cartItems: deleteCartItems};
-    
-    case 'CART-ITEM-DELETE': 
-      const deleteItem = state.cartItems.filter((item) => item.id !== action.payload.id) 
-      return {...state, cartItems: deleteItem};
+    case "DELETE-ITEM":
+      const deleteItems = state.items.filter(
+        (item) => item.id !== action.payload.id
+      );
+      const deleteCartItems = state.cartItems.filter(
+        (item) => item.id !== action.payload.id
+      );
+      return { ...state, items: deleteItems, cartItems: deleteCartItems };
 
-    case 'TOGGLE-EDIT-FORM':
-      const editForm = state.items.findIndex((item) => item.id === action.payload.id);
+    case "CART-ITEM-DELETE":
+      const deleteItem = state.cartItems.filter(
+        (item) => item.id !== action.payload.id
+      );
+      return { ...state, cartItems: deleteItem };
+
+    case "TOGGLE-EDIT-FORM":
+      const editForm = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
       const itemEdit = state.items[editForm];
-      return {...state, editForm: true, editItem: itemEdit}
+      return { ...state, editForm: true, editItem: itemEdit };
 
-    case 'SAVE-EDIT-FORM':
+    case "SAVE-EDIT-FORM":
       const updatedItem = state.items.map((item) => {
         if (item.id === action.payload.editedItem.id) {
           return action.payload.editedItem;
-        } 
-          return item;
-      });
-      const updateCartItems = state.cartItems.map((item) => {
-        if (item.id === action.payload.editedItem.id) {
-        return {...action.payload.editedItem, quantity: item.quantity}
         }
         return item;
-      })
-      return {...state, items: updatedItem, editForm: false, cartItems: updateCartItems};
+      });
 
-    case 'ORDERS':
-      let cartItems = [];
-      let exist = true;
-      const orders = state.cartItems.filter((item) => item.id === action.payload.id) 
-      if (orders.length !== 0) {
-        if (action.payload.type === 'INCREMENT') {
-          cartItems = state.cartItems.map((item) => {
-          if (item.id === action.payload.id) {
-            return {...item, quantity: item.quantity++}
-          }
-            return item;
-          });
+      const updateCart = state.cartItems.map((item) => {
+        if (item.id === action.payload.editedItem.id) {
+          return { ...action.payload.editedItem, quantity: item.quantity };
         }
+        return item;
+      });
+      return {
+        ...state,
+        items: updatedItem,
+        cartItems: updateCart,
+        editForm: false,
+      };
 
-      else if (action.payload.type === 'DECREMENT') {
-        exist = false
-          cartItems = state.cartItems.map((item) => {
-            if (item.id === action.payload.id) {
-              if(item.quantity-1){
-              return {...item, quantity: item.quantity-1}
-            } 
-            exist = true
-            return item
-          }
-          return item;
-          });
-
-          if (exist === true) {
-            cartItems = cartItems.filter((item) => item.id !== action.payload.id);
-          }
-          return {...state, cartItems: cartItems};
-        }
-      }
-        
-      else {
-        let newItem = state.items.filter((item) => item.id === action.payload.id) 
-        newItem = Object.assign({}, ...newItem)
-        
-        const item = {...newItem, quantity: 1}
-        cartItems.push(...state.cartItems, {...item});
-        } 
-      return {...state, cartItems: cartItems};
-  
-    case 'QUANTITY': 
-      let quantityOfCarts = [];
-      if (action.payload.type === 'INCREMENT') {
-        quantityOfCarts = state.cartItems.map((item) => {
+    case "ADD-TO-CART":
+      let updatedCart = [];
+      const cart = state.cartItems.filter(
+        (item) => item.id === action.payload.id
+      );
+      if (cart.length > 0) {
+        updatedCart = state.cartItems.map((item) => {
           if (item.id === action.payload.id) {
-            return {...item, quantity: item.quantity + 1}
+            return { ...item, quantity: item.quantity + 1 };
           }
           return item;
         });
-      } 
-      else if (action.payload.type === 'DECREMENT') {
+      } else {
+        let newCart = state.items.filter(
+          (item) => item.id === action.payload.id
+        );
+        newCart = Object.assign({}, ...newCart);
+
+        const updateCart = {
+          ...newCart,
+          quantity: 1,
+        };
+        updatedCart = [...state.cartItems, { ...updateCart }];
+      }
+      return { ...state, cartItems: updatedCart };
+
+    case "QUANTITY":
+      let quantityOfCarts = [];
+      if (action.payload.type === "INCREMENT") {
+        quantityOfCarts = state.cartItems.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, quantity: item.quantity + 1 };
+          }
+          return item;
+        });
+      } else if (action.payload.type === "DECREMENT") {
         let exist = false;
         quantityOfCarts = state.cartItems.map((item) => {
           if (item.id === action.payload.id) {
-            if (item.quantity-1) {
-            return {...item, quantity: item.quantity - 1}
-            }  
+            if (item.quantity - 1) {
+              return { ...item, quantity: item.quantity - 1 };
+            }
             exist = true;
             return item;
           }
           return item;
         });
         if (exist === true) {
-          quantityOfCarts = quantityOfCarts.filter((item) => item.id !== action.payload.id);
+          quantityOfCarts = quantityOfCarts.filter(
+            (item) => item.id !== action.payload.id
+          );
         }
-      } 
-      return {...state, cartItems: quantityOfCarts};
-
-      case "MENU": {
-        return {
-          ...state,
-          items: action.payload,
-        };
       }
+      return { ...state, cartItems: quantityOfCarts };
+
+    case "MENU": {
+      return {
+        ...state,
+        items: action.payload,
+      };
+    }
+
+    case "CART": {
+      return {
+        ...state,
+        cartItems: action.payload,
+      };
+    }
 
     default:
-      return {...state}
-    }
-}
+      return { ...state };
+  }
+};
 
 const App = () => {
   // RESTO APP
-  const [state, dispatch] = useReducer(reducer, initialState)
-
+  const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    axios.get("http://localhost:3000/menu").then((response) => {
+    axios.get("http://localhost:4000/api/menu").then((response) => {
       dispatch({
         type: "MENU",
-        payload: response.data,
-      })
+        payload: response.data.items,
+      });
+      dispatch({
+        type: "CART",
+        payload: response.data.cart,
+      });
     });
   }, []);
 
@@ -174,45 +180,43 @@ const App = () => {
   }, []);
 
   const handleOrderClick = (id) => {
-    dispatch({type:'ORDERS', payload:{id}})
+    dispatch({ type: "ORDERS", payload: { id } });
   };
 
   const addItem = (newItem) => {
-    dispatch({type: 'ADD-ITEM-SUBMIT', payload: {newItem}})
+    dispatch({ type: "ADD-ITEM-SUBMIT", payload: { newItem } });
   };
 
   const filterCategory = (category) => {
-    dispatch ({type: 'CATEGORIES', payload: {category: category}});
+    dispatch({ type: "CATEGORIES", payload: { category: category } });
   };
 
   const showAddItemForm = () => {
-    dispatch({type: 'TOGGLE-ADD-ITEM-FORM', payload: {newItems: true} })
+    dispatch({ type: "TOGGLE-ADD-ITEM-FORM", payload: { newItems: true } });
   };
-  
+
   const editCurrItem = (editedItem) => {
-    axios.put(`http://localhost:3000/menu/${editedItem}`).then((response) => {
-      dispatch({type: 'SAVE-EDIT-FORM', payload:{editedItem}})
-    });
+    dispatch({ type: "SAVE-EDIT-FORM", payload: { editedItem } });
   };
 
   const cancelEditItem = () => {
-    dispatch({type: 'TOGGLE-EDIT-ITEM-FORM', payload: {editForm: false} })
+    dispatch({ type: "TOGGLE-EDIT-ITEM-FORM", payload: { editForm: false } });
   };
 
   const handleDeleteClick = (id) => {
-    axios.delete(`http://localhost:3000/menu/${id}`).then((response) => {
-      dispatch({type: 'DELETE-ITEM', payload: {id}})
+    axios.delete(`http://localhost:4000/api/menu/${id}`).then((response) => {
+      dispatch({ type: "DELETE-ITEM", payload: { id } });
     });
   };
 
   const handleEditClick = (id) => {
-    dispatch({type: 'TOGGLE-EDIT-FORM', payload:{id}})
+    dispatch({ type: "TOGGLE-EDIT-FORM", payload: { id } });
   };
 
   const hideEditButton = () => {
-    dispatch ({ type: 'TOGGLE-EDIT-FORM', payload: {editForm: true}})
+    dispatch({ type: "TOGGLE-EDIT-FORM", payload: { editForm: true } });
   };
-  
+
   const listCartItems = state.cartItems.map((item, index) => (
     <CartItems
       key={index}
@@ -251,37 +255,53 @@ const App = () => {
           editButton={state.editForm}
         />
       ))
-    );   
-    
-    const getTotal = () => {
-      let totalSum = 0
-      state.cartItems.map((item) => {
-        totalSum += item.price * item.quantity;
-        })
-        return totalSum;
-    };
-    
-    const totalAmount = getTotal();
+    );
+
+  const getTotal = () => {
+    let totalSum = 0;
+    state.cartItems.map((item) => {
+      totalSum += item.price * item.quantity;
+    });
+    return totalSum;
+  };
+
+  const totalAmount = getTotal();
   return (
-    <div className={Styles.App}> 
+    <div className={Styles.App}>
       {/* RESTO APP */}
       <div className={Styles.header}>
-       <img src={Logo} alt="logo"/><p className={Styles.projName}>Bamboo Cafe</p>
+        <img src={Logo} alt="logo" />
+        <p className={Styles.projName}>Bamboo Cafe</p>
       </div>
 
       <br />
-        <button className={Styles.addItem} onClick={showAddItemForm}>Add Item</button>
+      <button className={Styles.addItem} onClick={showAddItemForm}>
+        Add Item
+      </button>
       <br />
 
-      {state.newItems ? <NewItem submit={addItem} cancel={showAddItemForm} /> : ""}
-      {state.editForm ? <EditItem submit={editCurrItem} cancel={cancelEditItem} hideEditButton={hideEditButton} {...state.editItem} /> : ""}
+      {state.newItems ? (
+        <NewItem submit={addItem} cancel={showAddItemForm} />
+      ) : (
+        ""
+      )}
+      {state.editForm ? (
+        <EditItem
+          submit={editCurrItem}
+          cancel={cancelEditItem}
+          hideEditButton={hideEditButton}
+          {...state.editItem}
+        />
+      ) : (
+        ""
+      )}
 
       <br />
-        <FilterCartItem filterCategory={filterCategory} categories={categories}/>
+      <FilterCartItem filterCategory={filterCategory} categories={categories} />
       <br />
 
       <div className={Styles.ItemList}>{listItems}</div>
-        <p className={Styles.totalAmount}>Total Amount: Php {totalAmount}</p>
+      <p className={Styles.totalAmount}>Total Amount: Php {totalAmount}</p>
       <div className={Styles.ItemList}>{listCartItems}</div>
     </div>
   );

@@ -1,14 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const app = express(); //creates an express app
-const port = 3000;
-
-//body-parser
 const bodyParser = require("body-parser");
-app.use(bodyParser.json());
-
-const menuRouter = require("./routes/menu");
+const menuRouter = require("./routes/items");
 const cartRouter = require("./routes/cart");
+const port = 4000;
 
 app.use(
   cors({
@@ -16,10 +12,13 @@ app.use(
   })
 );
 
-app.use("/menu", menuRouter);
-app.use("/cart", cartRouter);
+app.use(bodyParser.json());
+
+app.use("/api/menu", menuRouter);
+app.use("/api/cart", cartRouter);
 
 app.listen(port, () => {
   console.log(`Express server running on port ${port}.`);
 });
 
+module.exports = app;

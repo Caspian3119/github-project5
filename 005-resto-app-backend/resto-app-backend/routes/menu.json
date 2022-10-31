@@ -1,30 +1,62 @@
-[
+{
+  "items": [
     {
-        "id": 1,
-        "name":  "Burger",
-        "price": 50,
-        "category": "Food",
-        "image": "https://cdn-icons-png.flaticon.com/512/198/198416.png"
+      "id": 1,
+      "name": "Burger",
+      "price": "500",
+      "category": "Food",
+      "image": "https://cdn-icons-png.flaticon.com/512/198/198416.png"
     },
     {
-        "id": 2,
-        "name": "Iced Tea",
-        "price": 45,
-        "category": "Drink",
-        "image": "https://cdn-icons-png.flaticon.com/512/1187/1187466.png"
+      "id": 2,
+      "name": "Iced Tea",
+      "price": 45,
+      "category": "Drink",
+      "image": "https://cdn-icons-png.flaticon.com/512/1187/1187466.png"
     },
     {
-        "id": 3,
-        "name": "Pizza",
-        "price": 100,
-        "category": "Food",
-        "image": "https://cdn-icons-png.flaticon.com/512/3132/3132693.png"
+      "id": 3,
+      "name": "Pizza",
+      "price": 100,
+      "category": "Food",
+      "image": "https://cdn-icons-png.flaticon.com/512/3132/3132693.png"
     },
     {
-        "id": 4,
-        "name": "Fries",
-        "price": 25,
-        "category": "Food",
-        "image": "https://cdn-icons-png.flaticon.com/512/1187/1187466.png"
+      "id": 4,
+      "name": "Fries",
+      "price": 25,
+      "category": "Food",
+      "image": "https://cdn-icons-png.flaticon.com/512/123/123300.png"
     }
-]
+  ],
+  "cart": [
+    {
+      "id": 1,
+      "name": "Burger",
+      "price": "500",
+      "quantity": 2,
+      "image": "https://cdn-icons-png.flaticon.com/512/198/198416.png"
+    },
+    {
+      "id": 2,
+      "name": "Iced Tea",
+      "price": 45,
+      "image": "https://cdn-icons-png.flaticon.com/512/1187/1187466.png",
+      "quantity": 1
+    },
+    {
+      "id": 3,
+      "name": "Pizza",
+      "price": 100,
+      "image": "https://cdn-icons-png.flaticon.com/512/3132/3132693.png",
+      "quantity": 1
+    },
+    {
+      "id": 4,
+      "name": "Fries",
+      "price": 25,
+      "image": "https://cdn-icons-png.flaticon.com/512/123/123300.png",
+      "quantity": 1
+    }
+  ]
+}
