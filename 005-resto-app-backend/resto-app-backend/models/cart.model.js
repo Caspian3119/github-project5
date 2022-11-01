@@ -96,7 +96,7 @@ const decrementCart = (request, response) => {
   const parseData = JSON.parse(data);
   const cart = parseData.cart;
 
-  const increment = cart.map((item) => {
+  const decrement = cart.map((item) => {
     if(item.id == request.params.id){
       item = {
         id: item.id,
@@ -110,7 +110,7 @@ const decrementCart = (request, response) => {
   })
   const newQuantity = {
     ...parseData,
-    cart:increment
+    cart:decrement
   }
   fs.writeFile("./routes/menu.json", JSON.stringify(newQuantity, null, 2), (err) => {
     if (err) {
