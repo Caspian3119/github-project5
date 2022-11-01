@@ -18,7 +18,10 @@ const addNewItem = (request, response) => {
 
   const newItem = {
     id: uuidv4(),
-    itemBody,
+    name: itemBody.name,
+    price: itemBody.price,
+    category: itemBody.category,
+    image: itemBody.image,
   };
 
   let checkExisting = false;
@@ -54,45 +57,58 @@ const updateItem = (request, response) => {
 
   const updatedItems = items.map((item) => {
     if (item.id == request.params.id) {
-      item = itemBody;
+      item = {
+        id: item.id,
+        name: itemBody.name,
+        price: itemBody.price,
+        image: itemBody.image,
+        category: itemBody.category,
+      };
     }
     return item;
   });
 
   const updatedCart = cart.map((item) => {
-    if(item.id == request.params.id){
+    if (item.id == request.params.id) {
       item = {
         id: item.id,
         name: itemBody.name,
         price: itemBody.price,
+        image: itemBody.image,
         quantity: item.quantity,
-        image: itemBody.image
-      }
-      return item
+      };
+      return item;
     }
-  })
+  });
   const newData = {
     ...parseData,
     items: updatedItems,
-    cart: updatedCart
+    cart: updatedCart,
   };
 
-  fs.writeFile("./routes/menu.json", JSON.stringify(newData, null, 2), (err) => {
-    if (err) {
-      response.send(err.message);
-    } else {
-      response.send("Item Updated");
+  fs.writeFile(
+    "./routes/menu.json",
+    JSON.stringify(newData, null, 2),
+    (err) => {
+      if (err) {
+        response.send(err.message);
+      } else {
+        response.send("Item Updated");
+      }
     }
-  });
+  );
 };
 
 const deleteItem = (request, response) => {
   const data = fs.readFileSync("./routes/menu.json");
   const parseData = JSON.parse(data);
   const items = parseData.items;
+  const cart = parseData.cart;
 
   const selectedItem = items.filter((item) => item.id != request.params.id);
-  const deletedItem = { ...parseData, items: selectedItem, cart: selectedItem };
+  const selectedCart = cart.filter((item) => item.id != request.params.id);
+
+  const deletedItem = { ...parseData, items: selectedItem, cart: selectedCart };
 
   fs.writeFile(
     "./routes/menu.json",
