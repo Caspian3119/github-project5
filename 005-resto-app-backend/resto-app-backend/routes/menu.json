@@ -29,5 +29,20 @@
       "category": "Food"
     }
   ],
-  "cart": []
+  "cart": [
+    {
+      "id": 1,
+      "name": "Burger",
+      "price": "50",
+      "image": "https://cdn-icons-png.flaticon.com/512/198/198416.png",
+      "quantity": 1
+    },
+    {
+      "id": 2,
+      "name": "Iced Tea",
+      "price": 45,
+      "image": "https://cdn-icons-png.flaticon.com/512/1187/1187466.png",
+      "quantity": 1
+    }
+  ]
 }

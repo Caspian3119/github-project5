@@ -61,4 +61,64 @@ const deleteItem = (request, response) => {
   );
 };
 
-module.exports = { getCart, addToCart, deleteItem};
+const incrementCart = (request, response) => {
+  const data = fs.readFileSync("./routes/menu.json");
+  const parseData = JSON.parse(data);
+  const cart = parseData.cart;
+
+  const increment = cart.map((item) => {
+    if(item.id == request.params.id){
+      item = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: item.quantity + 1
+      }
+    }
+    return item 
+  })
+  const newQuantity = {
+    ...parseData,
+    cart:increment
+  }
+  fs.writeFile("./routes/menu.json", JSON.stringify(newQuantity, null, 2), (err) => {
+    if (err) {
+      response.send(err.message);
+    } else {
+      response.send("Item Updated");
+    }
+  });
+}
+
+const decrementCart = (request, response) => {
+  const data = fs.readFileSync("./routes/menu.json");
+  const parseData = JSON.parse(data);
+  const cart = parseData.cart;
+
+  const increment = cart.map((item) => {
+    if(item.id == request.params.id){
+      item = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: item.quantity - 1
+      }
+    }
+    return item 
+  })
+  const newQuantity = {
+    ...parseData,
+    cart:increment
+  }
+  fs.writeFile("./routes/menu.json", JSON.stringify(newQuantity, null, 2), (err) => {
+    if (err) {
+      response.send(err.message);
+    } else {
+      response.send("Item Updated");
+    }
+  });
+}
+
+module.exports = { getCart, addToCart, deleteItem, incrementCart, decrementCart};

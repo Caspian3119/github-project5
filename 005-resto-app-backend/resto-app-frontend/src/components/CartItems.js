@@ -21,9 +21,11 @@ const CartItems = ({ name, price, image, quantity, dispatch, id }) => {
           <button
             className="quantity-buttons"
             onClick={() =>
-              dispatch({
-                type: "QUANTITY",
-                payload: { type: "DECREMENT", id: id },
+              axios.put(`http://localhost:4000/api/cart/decrement/${id}`).then((response) => {
+                dispatch({
+                  type: "QUANTITY",
+                  payload: { type: "DECREMENT", id: id },
+                })
               })
             }
           >
@@ -33,9 +35,11 @@ const CartItems = ({ name, price, image, quantity, dispatch, id }) => {
           <button
             className="quantity-buttons"
             onClick={() =>
-              dispatch({
-                type: "QUANTITY",
-                payload: { type: "INCREMENT", id: id },
+              axios.put(`http://localhost:4000/api/cart/increment/${id}`).then((response) => {
+                dispatch({
+                  type: "QUANTITY",
+                  payload: { type: "INCREMENT", id: id },
+                })
               })
             }
           >
