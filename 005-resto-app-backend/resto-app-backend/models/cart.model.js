@@ -40,5 +40,25 @@ const addToCart = (request, response) => {
   });
 }
 
+const deleteItem = (request, response) => {
+  const data = fs.readFileSync("./routes/menu.json");
+  const parseData = JSON.parse(data);
+  const cart = parseData.cart;
 
-module.exports = { getCart, addToCart};
+  const selectedItem = cart.filter((item) => item.id != request.params.id);
+  const deletedItem = { ...parseData, cart: selectedItem };
+
+  fs.writeFile(
+    "./routes/menu.json",
+    JSON.stringify(deletedItem, null, 2),
+    (err) => {
+      if (err) {
+        response.send(err.message);
+      } else {
+        response.send("Item Deleted");
+      }
+    }
+  );
+};
+
+module.exports = { getCart, addToCart, deleteItem};
