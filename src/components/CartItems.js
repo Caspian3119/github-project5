@@ -52,7 +52,7 @@ const CartItems = ({ name, price, image, quantity, dispatch, id }) => {
             className="buttons"
             onClick={() =>
               axios
-                .delete(`http://localhost:4000/api/cart/${id}`)
+                .delete(`https://project-4-back-end.herokuapp.com/api/cart/${id}`)
                 .then((response) => {
                   dispatch({ type: "CART-ITEM-DELETE", payload: { id: id } });
                 })
