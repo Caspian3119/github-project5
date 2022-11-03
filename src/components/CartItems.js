@@ -21,7 +21,7 @@ const CartItems = ({ name, price, image, quantity, dispatch, id }) => {
           <button
             className="quantity-buttons"
             onClick={() =>
-              axios.put(`http://localhost:4000/api/cart/decrement/${id}`).then((response) => {
+              axios.put(`https://project-4-back-end.herokuapp.com/api/cart/decrement/${id}`).then((response) => {
                 dispatch({
                   type: "QUANTITY",
                   payload: { type: "DECREMENT", id: id },

@@ -25,7 +25,7 @@ const ItemBox = ({
             className="itemBtn"
             onClick={() =>
               axios
-                .post("http://localhost:4000/api/cart", {
+                .post("https://project-4-back-end.herokuapp.com/api/cart", {
                   id: id,
                   name: name,
                   price: price,

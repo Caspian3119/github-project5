@@ -58,7 +58,7 @@ const EditItemForm = ({submit, id, cancel, name, price, category, image}) => {
 
   const onEditItem = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:4000/api/menu/${id}`, item).then((response) => {
+    axios.put(`https://project-4-back-end.herokuapp.com/api/menu/${id}`, item).then((response) => {
     submit(item);
   });
 }

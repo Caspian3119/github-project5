@@ -160,7 +160,7 @@ const App = () => {
   // RESTO APP
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    axios.get("http://localhost:4000/api/menu").then((response) => {
+    axios.get("https://project-4-back-end.herokuapp.com/api/menu").then((response) => {
       dispatch({
         type: "MENU",
         payload: response.data.items,
@@ -204,7 +204,7 @@ const App = () => {
   };
 
   const handleDeleteClick = (id) => {
-    axios.delete(`http://localhost:4000/api/menu/${id}`).then((response) => {
+    axios.delete(`https://project-4-back-end.herokuapp.com/api/menu/${id}`).then((response) => {
       dispatch({ type: "DELETE-ITEM", payload: { id } });
     });
   };

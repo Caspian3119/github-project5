@@ -49,7 +49,7 @@ const NewItem = (props) => {
 
   const onSubmitItem = (e) => {
     e.preventDefault()
-    axios.post("http://localhost:4000/api/menu", item).then((response) => {
+    axios.post("https://project-4-back-end.herokuapp.com/api/menu", item).then((response) => {
       props.submit(item)
     })
   }
